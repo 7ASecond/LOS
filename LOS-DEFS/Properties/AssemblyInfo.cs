@@ -1,4 +1,10 @@
-﻿using System.Reflection;
+﻿// 2017, 1, 18
+// LOS-DEFS:AssemblyInfo.cs
+// Copyright (c) 2017 PopulationXextensions: .aspx .ascx
+<%-- 
+Copyright (c) 2011 rubicon IT GmbH
+--%>
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 

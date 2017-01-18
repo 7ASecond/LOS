@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LOS-Security", "LOS-Securit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LOS-Installer", "LOS-Installer\LOS-Installer.csproj", "{7851CF32-A070-4CD6-9533-012C835B6601}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LOS-Updater", "LOS-Updater\LOS-Updater.csproj", "{264D3E62-DD5A-4A39-84B1-CC633A2040A5}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{7851CF32-A070-4CD6-9533-012C835B6601}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7851CF32-A070-4CD6-9533-012C835B6601}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7851CF32-A070-4CD6-9533-012C835B6601}.Release|Any CPU.Build.0 = Release|Any CPU
+		{264D3E62-DD5A-4A39-84B1-CC633A2040A5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{264D3E62-DD5A-4A39-84B1-CC633A2040A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{264D3E62-DD5A-4A39-84B1-CC633A2040A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{264D3E62-DD5A-4A39-84B1-CC633A2040A5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

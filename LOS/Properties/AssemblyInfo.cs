@@ -1,4 +1,7 @@
-﻿using System.Reflection;
+﻿// 2017, 1, 18
+// LOS:AssemblyInfo.cs
+// Copyright (c) 2017 PopulationX
+using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 

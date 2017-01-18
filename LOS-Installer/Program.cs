@@ -1,4 +1,7 @@
-﻿using System;
+﻿// 2017, 1, 18
+// LOS-Installer:Program.cs
+// Copyright (c) 2017 PopulationX
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;

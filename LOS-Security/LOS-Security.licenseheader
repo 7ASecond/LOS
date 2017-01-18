@@ -1,0 +1,14 @@
+﻿extensions: designer.cs generated.cs
+extensions: .cs .cpp .h
+// %CurrentYear%, %CurrentMonth%, %CurrentDay%
+// %Project%:%FileName%
+// Copyright (c) %CurrentYear% PopulationXextensions: .aspx .ascx
+<%-- 
+Copyright (c) 2011 rubicon IT GmbH
+--%>
+extensions: .vb
+'Sample license text.
+extensions:  .xml .config .xsd
+<!--
+Sample license text.
+-->

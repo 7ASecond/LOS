@@ -1,4 +1,7 @@
-﻿using System;
+﻿// 2017, 1, 18
+// LOS-Installer:frminstaller.cs
+// Copyright (c) 2017 PopulationX
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
