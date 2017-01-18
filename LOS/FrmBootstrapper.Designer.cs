@@ -40,6 +40,7 @@
             this.lblPassword = new System.Windows.Forms.Label();
             this.tbUsername = new System.Windows.Forms.TextBox();
             this.lblUsername = new System.Windows.Forms.Label();
+            this.btnDebugExit = new System.Windows.Forms.Button();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -84,6 +85,7 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel1.Controls.Add(this.btnDebugExit);
             this.panel1.Controls.Add(this.lblMessage);
             this.panel1.Controls.Add(this.btnGo);
             this.panel1.Controls.Add(this.tbMemorableWord);
@@ -191,6 +193,22 @@
             this.lblUsername.TabIndex = 18;
             this.lblUsername.Text = "Username";
             // 
+            // btnDebugExit
+            // 
+            this.btnDebugExit.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnDebugExit.FlatAppearance.BorderColor = System.Drawing.Color.LightSteelBlue;
+            this.btnDebugExit.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnDebugExit.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnDebugExit.ForeColor = System.Drawing.Color.Black;
+            this.btnDebugExit.Location = new System.Drawing.Point(1143, 434);
+            this.btnDebugExit.Name = "btnDebugExit";
+            this.btnDebugExit.Size = new System.Drawing.Size(75, 35);
+            this.btnDebugExit.TabIndex = 26;
+            this.btnDebugExit.Text = "Exit";
+            this.btnDebugExit.UseVisualStyleBackColor = true;
+            this.btnDebugExit.Visible = false;
+            this.btnDebugExit.Click += new System.EventHandler(this.btnDebugExit_Click);
+            // 
             // FrmBootstrapper
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -229,6 +247,7 @@
         private System.Windows.Forms.TextBox tbUsername;
         private System.Windows.Forms.Label lblUsername;
         private System.Windows.Forms.Label lblMessage;
+        private System.Windows.Forms.Button btnDebugExit;
     }
 }
 

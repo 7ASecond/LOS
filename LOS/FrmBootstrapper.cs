@@ -29,6 +29,11 @@ namespace LOS
         public FrmBootstrapper()
         {
             InitializeComponent();
+
+            //Give ourselves an easy way to exit the application when in DEBUG mode.
+#if DEBUG
+            btnDebugExit.Visible = true;
+#endif
         }
 
         /// <summary>
@@ -58,8 +63,8 @@ namespace LOS
         /// </returns>
         private DEFS.UserStatus DoesUserExist(SecureString username, SecureString password, SecureString memorableWord)
         {
-           return _fsDefs.FindUser(username, password, memorableWord);
-            
+            return _fsDefs.FindUser(username, password, memorableWord);
+
         }
 
         /// <summary>
@@ -152,26 +157,71 @@ namespace LOS
 
         private void FatalCrash()
         {
-            
+
 
         }
 
         private void DestroyData(SecureString ssUsername, SecureString ssPassword, SecureString ssMemorableWord)
         {
-            
+
 
         }
 
         private void CreateUser(SecureString ssUsername, SecureString ssPassword, SecureString ssMemorableWord)
         {
-            Run(LosApplications.Installer);
-
+            Run(LosApplications.Installer, ssUsername, ssPassword, ssMemorableWord);
+            ssUsername.Dispose();
+            ssPassword.Dispose();
+            ssMemorableWord.Dispose();
         }
 
-        private void Run(LosApplications installer)
+        private void Run(LosApplications app, SecureString ssUsername, SecureString ssPassword, SecureString ssMemorableWord)
         {
-            // Run the Installer
+            string pathToApp = string.Empty;
 
+            switch (app)
+            {
+                case LosApplications.Installer:
+                    pathToApp = "C:\\LOS";
+                    break;
+                case LosApplications.Shell:
+                    break;
+                case LosApplications.Updater:
+                    break;
+                default:
+                    FatalCrash();
+                    break;
+            }
+
+            Process runProcess = new Process();
+            ProcessStartInfo processStartInfo = new ProcessStartInfo
+            {
+                Arguments = "-U:" + ssUsername + ",-P:" + ssPassword + ",-M:" + ssMemorableWord,
+                CreateNoWindow = false,
+                FileName = "LOS-Installer.exe",
+                LoadUserProfile = false,
+                RedirectStandardError = false,
+                RedirectStandardInput = false,
+                RedirectStandardOutput = false,
+                UseShellExecute = false,
+                WorkingDirectory = pathToApp
+            };
+
+            // Don't know if this will work, It may need unsafe strings to be passed
+
+            Hide();
+            runProcess = System.Diagnostics.Process.Start(processStartInfo);
+            if (runProcess != null)
+            {
+                runProcess.PriorityBoostEnabled = true;
+                runProcess.WaitForExit();
+            }
+            Show();
+        }
+
+        private void btnDebugExit_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

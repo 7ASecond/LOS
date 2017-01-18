@@ -33,6 +33,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="LOS-DEFS, Version=1.0.6227.16957, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\LOS\LOS-DEFS.dll</HintPath>
+    </Reference>
+    <Reference Include="LOS-Installer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\LOS\LOS-Installer.exe</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -79,17 +87,10 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\LOS-DEFS\LOS-DEFS.csproj">
-      <Project>{12c8e0c3-7868-4469-b9e1-0256376313f2}</Project>
-      <Name>LOS-DEFS</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\LOS-Installer\LOS-Installer.csproj">
-      <Project>{7851cf32-a070-4cd6-9533-012c835b6601}</Project>
-      <Name>LOS-Installer</Name>
-    </ProjectReference>
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>copy "$(TargetPath)" c:\LOS\$(TargetFileName)</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
