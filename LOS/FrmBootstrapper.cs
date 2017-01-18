@@ -175,6 +175,23 @@ namespace LOS
             ssMemorableWord.Dispose();
         }
 
+        /// <summary>
+        /// This is the Bootstrapper's main launcher
+        /// </summary>
+        /// <param name="app">
+        /// enum: LOSApplications Installer -> Launch the Installer
+        /// enum: LOSApplications Shell -> Launch the LOS Shell
+        /// enum: LOSApplications Updater -> Launch the Update Applcation
+        /// </param>
+        /// <param name="ssUsername">
+        /// SecureString: The User's username
+        /// </param>
+        /// <param name="ssPassword">
+        /// SecureString: The User's password
+        /// </param>
+        /// <param name="ssMemorableWord">
+        /// SecureString: The User's Memorable word
+        /// </param>
         private void Run(LosApplications app, SecureString ssUsername, SecureString ssPassword, SecureString ssMemorableWord)
         {
             string pathToApp = string.Empty;
@@ -182,10 +199,10 @@ namespace LOS
             switch (app)
             {
                 case LosApplications.Installer:
+                case LosApplications.Shell:
                     pathToApp = "C:\\LOS";
                     break;
-                case LosApplications.Shell:
-                    break;
+                
                 case LosApplications.Updater:
                     break;
                 default:
@@ -196,7 +213,7 @@ namespace LOS
             Process runProcess = new Process();
             ProcessStartInfo processStartInfo = new ProcessStartInfo
             {
-                Arguments = "-U:" + ssUsername + ",-P:" + ssPassword + ",-M:" + ssMemorableWord,
+              //  Arguments = "-U:" + ssUsername + ",-P:" + ssPassword + ",-M:" + ssMemorableWord,
                 CreateNoWindow = false,
                 FileName = "LOS-Installer.exe",
                 LoadUserProfile = false,
@@ -212,13 +229,21 @@ namespace LOS
             Hide();
             runProcess = System.Diagnostics.Process.Start(processStartInfo);
             if (runProcess != null)
-            {
+            {                
                 runProcess.PriorityBoostEnabled = true;
                 runProcess.WaitForExit();
             }
             Show();
+            ssUsername.Dispose();
+            ssMemorableWord.Dispose();
+            ssPassword.Dispose();
         }
 
+        /// <summary>
+        /// Only for closing the application when in DEBUG mode
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnDebugExit_Click(object sender, EventArgs e)
         {
             Application.Exit();
