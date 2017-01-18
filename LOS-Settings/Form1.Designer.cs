@@ -1,4 +1,4 @@
-﻿namespace LOS
+﻿namespace LOS_Settings
 {
     partial class Form1
     {

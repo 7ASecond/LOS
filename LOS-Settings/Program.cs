@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace LOS
+namespace LOS_Settings
 {
     static class Program
     {
@@ -16,7 +16,7 @@ namespace LOS
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new FrmBootstrapper());
+            Application.Run(new Form1());
         }
     }
 }
