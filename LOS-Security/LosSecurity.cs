@@ -13,6 +13,15 @@ namespace LOS_Security
     public static class LosSecurity
     {
 
+        /// <summary>
+        /// Converts a string to a SecureString
+        /// </summary>
+        /// <param name="unsafeText">
+        /// string: Text to convert to SecureString
+        /// </param>
+        /// <returns>
+        /// SecureString: The converted text
+        /// </returns>
         public static SecureString ConvertToSecureString(this string unsafeText)
         {
             if (unsafeText == null)
@@ -29,6 +38,15 @@ namespace LOS_Security
             }
         }
 
+        /// <summary>
+        /// Converts a SecureString to an unsecure string
+        /// </summary>
+        /// <param name="safeText">
+        /// SecureString: The string to make unsafe
+        /// </param>
+        /// <returns>
+        /// string: The unsafe version of the text
+        /// </returns>
         public static string ConvertToUnsecureString(this SecureString safeText)
         {
             if (safeText == null)
@@ -44,6 +62,24 @@ namespace LOS_Security
             {
                 Marshal.ZeroFreeGlobalAllocUnicode(unmanagedString);
             }
+        }
+
+        /// <summary>
+        /// Overwrites the contents of an unsafe string with # and then clears the string.
+        /// </summary>
+        /// <param name="unsafeText">
+        /// string: The unsafe text to be erased
+        /// </param>
+        /// <remarks>
+        /// TODO: This may not be all that safe.
+        /// </remarks>
+        public static void Erase(this string unsafeText)
+        {
+            for (int idx = 0; idx < unsafeText.Length; idx++)
+            {
+                unsafeText.ToCharArray()[idx] = '#';
+            }
+            unsafeText = string.Empty;
         }
 
     }

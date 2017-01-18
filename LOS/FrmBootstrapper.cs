@@ -16,9 +16,16 @@ namespace LOS
     public partial class FrmBootstrapper : Form
     {
 
-        DEFS fsDefs = new DEFS();
+        private readonly DEFS _fsDefs = new DEFS();
 
-       
+        enum LosApplications
+        {
+            Installer,
+            Updater,
+            Shell
+        }
+
+
         public FrmBootstrapper()
         {
             InitializeComponent();
@@ -42,6 +49,20 @@ namespace LOS
 
 
         /// <summary>
+        /// Does the User have a valid local account?
+        /// </summary>
+        /// <returns>
+        /// enum: UserStatus.UserDoesNotExist -> The user can not be found in the DEFS Account list
+        /// enum: UserStatus.UserExists -> The User has been found and validated in the DEFS Account List
+        /// enum: UserStatus.UserPanic -> The Panic Memorable Word has been used and User has been Delinked from the DEFS Filesystem - All Data is lost Permanently.
+        /// </returns>
+        private DEFS.UserStatus DoesUserExist(SecureString username, SecureString password, SecureString memorableWord)
+        {
+           return _fsDefs.FindUser(username, password, memorableWord);
+            
+        }
+
+        /// <summary>
         /// Log the user in or create a new account
         /// </summary>
         /// <param name="sender"></param>
@@ -54,7 +75,7 @@ namespace LOS
         /// 5) If Registered and Panic Memorable Word is used - Destroy All Data.
         /// 6) If Registered and Security is good - Login and Mount DEFS - Resize DEFS
         /// </remarks>
-        private void btnGo_Click(object sender, EventArgs e)
+        private void btnGo_Click_1(object sender, EventArgs e)
         {
             //TODO: Security Enhancements
             // Use SecureString TextBox
@@ -76,7 +97,7 @@ namespace LOS
             {
                 ssMemorableWord.AppendChar(c);
             }
-            tbMemorableWord.Text = "";
+            tbMemorableWord.Text = string.Empty;
 
 
             if (tbPassword.Text == string.Empty || tbPassword.Text.Length < 8)
@@ -91,7 +112,7 @@ namespace LOS
             {
                 ssPassword.AppendChar(c);
             }
-            tbPassword.Text = "";
+            tbPassword.Text = string.Empty;
 
             if (tbUsername.Text == string.Empty || tbUsername.Text.Length < 4)
             {
@@ -105,7 +126,7 @@ namespace LOS
             {
                 ssUsername.AppendChar(c);
             }
-            tbUsername.Text = "";
+            tbUsername.Text = string.Empty;
 
             // Ok so we have passed the validation of the User's details
 
@@ -115,31 +136,42 @@ namespace LOS
             switch (DoesUserExist(ssUsername, ssPassword, ssMemorableWord))
             {
                 case DEFS.UserStatus.UserDoesNotExist:
+                    CreateUser(ssUsername, ssPassword, ssMemorableWord);
                     break;
                 case DEFS.UserStatus.UserExists:
                     break;
                 case DEFS.UserStatus.UserPanic:
+                    DestroyData(ssUsername, ssPassword, ssMemorableWord);
                     break;
                 default:
+                    FatalCrash();
                     break;
 
             }
-          
+        }
+
+        private void FatalCrash()
+        {
+            
 
         }
 
-        /// <summary>
-        /// Does the User have a valid local account?
-        /// </summary>
-        /// <returns>
-        /// enum: UserStatus.UserDoesNotExist -> The user can not be found in the DEFS Account list
-        /// enum: UserStatus.UserExists -> The User has been found and validated in the DEFS Account List
-        /// enum: UserStatus.UserPanic -> The Panic Memorable Word has been used and User has been Delinked from the DEFS Filesystem - All Data is lost Permanently.
-        /// </returns>
-        private DEFS.UserStatus DoesUserExist(SecureString username, SecureString password, SecureString memorableWord)
+        private void DestroyData(SecureString ssUsername, SecureString ssPassword, SecureString ssMemorableWord)
         {
-           return fsDefs.FindUser(username, password, memorableWord);
             
+
+        }
+
+        private void CreateUser(SecureString ssUsername, SecureString ssPassword, SecureString ssMemorableWord)
+        {
+            Run(LosApplications.Installer);
+
+        }
+
+        private void Run(LosApplications installer)
+        {
+            // Run the Installer
+
         }
     }
 }

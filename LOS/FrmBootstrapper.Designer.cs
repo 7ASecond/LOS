@@ -32,6 +32,7 @@
             this.label5 = new System.Windows.Forms.Label();
             this.btnShutdown = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.lblMessage = new System.Windows.Forms.Label();
             this.btnGo = new System.Windows.Forms.Button();
             this.tbMemorableWord = new System.Windows.Forms.TextBox();
             this.lblMemorableWord = new System.Windows.Forms.Label();
@@ -39,7 +40,6 @@
             this.lblPassword = new System.Windows.Forms.Label();
             this.tbUsername = new System.Windows.Forms.TextBox();
             this.lblUsername = new System.Windows.Forms.Label();
-            this.lblMessage = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -97,6 +97,15 @@
             this.panel1.Size = new System.Drawing.Size(1237, 487);
             this.panel1.TabIndex = 11;
             // 
+            // lblMessage
+            // 
+            this.lblMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMessage.Location = new System.Drawing.Point(389, 356);
+            this.lblMessage.Name = "lblMessage";
+            this.lblMessage.Size = new System.Drawing.Size(692, 93);
+            this.lblMessage.TabIndex = 25;
+            // 
             // btnGo
             // 
             this.btnGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -110,6 +119,7 @@
             this.btnGo.TabIndex = 24;
             this.btnGo.Text = "Go";
             this.btnGo.UseVisualStyleBackColor = true;
+            this.btnGo.Click += new System.EventHandler(this.btnGo_Click_1);
             // 
             // tbMemorableWord
             // 
@@ -180,15 +190,6 @@
             this.lblUsername.Size = new System.Drawing.Size(97, 24);
             this.lblUsername.TabIndex = 18;
             this.lblUsername.Text = "Username";
-            // 
-            // lblMessage
-            // 
-            this.lblMessage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblMessage.Font = new System.Drawing.Font("Microsoft Sans Serif", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMessage.Location = new System.Drawing.Point(389, 356);
-            this.lblMessage.Name = "lblMessage";
-            this.lblMessage.Size = new System.Drawing.Size(692, 93);
-            this.lblMessage.TabIndex = 25;
             // 
             // FrmBootstrapper
             // 

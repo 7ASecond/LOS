@@ -26,13 +26,14 @@ namespace LOS_DEFS
 
         // User File Data Structure
         private byte[] _memorableWordStructure = new byte[8];
-            // The location of the Memorable Word as an Offset to the end of the User File Data Structure.
+        // The location of the Memorable Word as an Offset to the end of the User File Data Structure.
 
         private byte[] _panicWordStructure = new byte[8];
-            // The location of the Panic Word as an Offset to the end of the User File Data Structure.
+        // The location of the Panic Word as an Offset to the end of the User File Data Structure.
 
         private byte[] _distributedFileSystemId = new byte[10];
-            // The location of the Distributed File System ID as an Offset to the end of the User File Data Structure.
+        // The location of the Distributed File System ID as an Offset to the end of the User File Data Structure.
+        private int UserFileDataStructureSize = 27;
 
 
         // Special Folders' Paths
@@ -45,9 +46,9 @@ namespace LOS_DEFS
         {
             // Check to see if the directory structure has been created
             // If not create it now
-            if (Directory.Exists(RootFolder)) Directory.CreateDirectory(RootFolder); // LOS ROOT Folder
-            if (Directory.Exists(UserFilesFolder)) Directory.CreateDirectory(UserFilesFolder); // LOS User Files Folder
-            if (Directory.Exists(DEFSFolder)) Directory.CreateDirectory(DEFSFolder); // LOS DEFS Folder
+            if (!Directory.Exists(RootFolder)) Directory.CreateDirectory(RootFolder); // LOS ROOT Folder
+            if (!Directory.Exists(UserFilesFolder)) Directory.CreateDirectory(UserFilesFolder); // LOS User Files Folder
+            if (!Directory.Exists(DEFSFolder)) Directory.CreateDirectory(DEFSFolder); // LOS DEFS Folder
         }
 
 
@@ -67,7 +68,7 @@ namespace LOS_DEFS
         // ReSharper disable once InconsistentNaming
         public bool CreateDEFS(int mb)
         {
-            Int64 fileByteSize = (mb/100)*1024;
+            Int64 fileByteSize = (mb / 100) * 1024;
             List<string> filenamesList = new List<string>();
             filenamesList = GenerateFilenames();
             Parallel.ForEach(filenamesList, (currentFile) =>
@@ -113,7 +114,7 @@ namespace LOS_DEFS
             StringBuilder result = new StringBuilder();
             foreach (byte b in data)
             {
-                result.Append(chars[b%(chars.Length)]);
+                result.Append(chars[b % (chars.Length)]);
             }
 
             // We are never going to decrypt this file so do not care about the encryption password.
@@ -141,7 +142,7 @@ namespace LOS_DEFS
             StringBuilder result = new StringBuilder();
             foreach (byte b in data)
             {
-                result.Append(chars[b%(chars.Length)]);
+                result.Append(chars[b % (chars.Length)]);
             }
             return result.ToString();
 
@@ -156,8 +157,10 @@ namespace LOS_DEFS
         /// </returns>
         private List<string> GenerateFilenames()
         {
+            Random random = new Random();
+            int fileNameCount = random.Next(5, 20);
             List<string> filenamesList = new List<string>();
-            for (int idx = 0; idx < 100; idx++)
+            for (int idx = 0; idx < fileNameCount; idx++)
             {
                 string g = Guid.NewGuid().ToString();
                 filenamesList.Add(g.Replace("-", ""));
@@ -214,8 +217,7 @@ namespace LOS_DEFS
         /// Enum: UserStatus UserDoesNotExist -> The User has NOT been found
         /// Enum: UserStatus UserPanic -> Destroy All Data
         /// </returns>
-        private UserStatus SearchForUserInUserFile(string filePath, SecureString username, SecureString password,
-            SecureString memorableWord)
+        private UserStatus SearchForUserInUserFile(string filePath, SecureString username, SecureString password, SecureString memorableWord)
         {
             int fileOffset = GetFileOffset(username, password);
             FileStream fs = null;
@@ -223,10 +225,39 @@ namespace LOS_DEFS
 
             try
             {
-                fs = new FileStream(Path.Combine(UserFilesFolder,filePath), FileMode.Open, FileAccess.Read,FileShare.None);
+                fs = new FileStream(Path.Combine(UserFilesFolder, filePath), FileMode.Open, FileAccess.Read,
+                    FileShare.Read);
                 sr = new StreamReader(fs);
-                char[] buffer = new char[];
-                sr.Read()
+                char[] buffer = new char[8];
+                sr.Read(buffer, fileOffset, 8);
+                string unsafePassphrase = username.ConvertToUnsecureString();
+                unsafePassphrase += password.ConvertToUnsecureString();
+
+                StringBuilder sb = new StringBuilder();
+                foreach (char c in buffer)
+                {
+                    sb.Append(c.ToString());
+                }
+
+                string result = StringCipher.Decrypt(sb.ToString(), unsafePassphrase);
+                unsafePassphrase.Erase();
+                int lookupPosition = -1;
+                bool successfulConversion = int.TryParse(result, out lookupPosition);
+                if (successfulConversion)
+                {
+                    if (SearchForMemorableWord(fs, memorableWord, lookupPosition, username, password))
+                    {
+                        return UserStatus.UserExists;
+                    }
+                    else if (SearchForMemorableWord(fs, memorableWord, lookupPosition + 8, username, password))
+                    {
+                        return UserStatus.UserPanic;
+                    }
+                    else
+                    {
+                        return UserStatus.UserDoesNotExist;
+                    }
+                }
 
                 fs.Close();
                 sr.Close();
@@ -237,11 +268,91 @@ namespace LOS_DEFS
             }
             finally
             {
+                username.Dispose();
+                password.Dispose();
+                memorableWord.Dispose();
                 sr?.Close();
                 fs?.Close();
             }
 
-            return UserStatus.UserPanic;
+            return UserStatus.UserDoesNotExist;
+        }
+
+
+        /// <summary>
+        /// Searches the UserFile for the memorableWord
+        /// </summary>
+        /// <param name="fs">
+        /// FileStream: The file to be searched
+        /// </param>
+        /// <param name="memorableWord">
+        /// SecureString: The Memorable Word to be found
+        /// </param>
+        /// <param name="lookupPosition">
+        /// int: The offset in the file to start searching from
+        /// </param>
+        /// <param name="username">
+        /// SecureString: The User's Username
+        /// </param>
+        /// <param name="password">
+        /// SecureString: The User's Password
+        /// </param>
+        /// <returns>
+        /// bool: True if the memorable word is found
+        /// bool: False if the memorable word is NOT found
+        /// </returns>
+        private bool SearchForMemorableWord(FileStream fs, SecureString memorableWord, int lookupPosition, SecureString username, SecureString password)
+        {
+
+
+            StreamReader sr = null;
+
+            try
+            {
+
+                sr = new StreamReader(fs);
+                char[] buffer = new char[8];
+                sr.Read(buffer, lookupPosition, 8);
+                string unsafePassphrase = username.ConvertToUnsecureString();
+                unsafePassphrase += password.ConvertToUnsecureString();
+
+                StringBuilder sb = new StringBuilder();
+                foreach (char c in buffer)
+                {
+                    sb.Append(c.ToString());
+                }
+
+                string result = StringCipher.Decrypt(sb.ToString(), unsafePassphrase);
+                unsafePassphrase.Erase();
+                string unsafeMemorableWord = memorableWord.ConvertToUnsecureString();
+                if (result == unsafeMemorableWord)
+                {
+                    unsafeMemorableWord.Erase();
+                    fs.Close();
+                    sr.Close();
+                    return true;
+                }
+
+                unsafeMemorableWord.Erase();
+                fs.Close();
+                sr.Close();
+                return false;
+            }
+            catch (Exception)
+            {
+
+                //TODO LOG THIS
+            }
+            finally
+            {
+                username.Dispose();
+                password.Dispose();
+                memorableWord.Dispose();
+                sr?.Close();
+                fs?.Close();
+            }
+
+            return false;
         }
 
 
@@ -265,15 +376,15 @@ namespace LOS_DEFS
             // Convert the secure username and password to unsafe strings
             string unsafeString = GetUnsafeString(username);
             unsafeString += GetUnsafeString(password);
-            
+
             // Calculate their numeric values (This is the offset)
             int totalValue = 0;
             foreach (char c in unsafeString)
             {
-                totalValue += (int) c;
+                totalValue += (int)c;
             }
             unsafeString = string.Empty;
-            
+
             return totalValue;
         }
 
@@ -305,5 +416,5 @@ namespace LOS_DEFS
         }
     }
 
-  
+
 }
