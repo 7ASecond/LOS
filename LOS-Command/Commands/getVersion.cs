@@ -1,4 +1,8 @@
-﻿using System;
+﻿// 2017, 1, 22
+// LOS-Command:getVersion.cs
+// Copyright (c) 2017 PopulationX
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;

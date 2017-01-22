@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace LOS_Updater
 {
-    //TODO: Needs to be made secure so that unauthorised updates to the system are not permitted.
+    //TODO: Needs to be made secure so that unauthorised updates to the system are not permitted. And that installation cannot be tracked back to a real user's computer.
     /// <summary>
     /// We have two types of installation file - The Latest Full Install and the Latest Cumulative Update since last Full Install
     /// These are just script files that explain which files go where and where they can be found on our servers
@@ -31,28 +31,65 @@ namespace LOS_Updater
     {
 
         public void GetLatestFullReleaseScript()
-        { }
+        {
+#if DEBUG
+            DoDebugInstall();
+#endif
+        }
 
         public void GetLatestCumulativeReleaseScript()
-        { }
+        {
+#if DEBUG
+            DoDebugInstall();
+#endif
+        }
 
         public void FindLatestLocalFullReleaseScript()
-        { }
+        {
+#if DEBUG
+            DoDebugInstall();
+#endif
+        }
 
         public void FindLatestLocalCumulativeReleaseScript()
-        { }
+        {
+#if DEBUG
+            DoDebugInstall();
+#endif
+        }
 
         public void DoFullInstall()
-        { }
+        {
+#if DEBUG
+            DoDebugInstall();
+#endif
+        }
 
         public void DoCumulativeInstall()
-        { }
+        {
+#if DEBUG
+            DoDebugInstall();
+#endif
+        }
 
         public void RollBackCumulative()
-        { }
+        {
+#if DEBUG
+            DoDebugInstall();
+#endif
+        }
 
         public void RollBackFull()
-        { }
+        {
+#if DEBUG
+            DoDebugInstall();
+#endif
+        }
+
+        private void DoDebugInstall()
+        {
+            
+        }
 
     }
 }

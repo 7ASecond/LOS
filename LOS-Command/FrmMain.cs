@@ -1,4 +1,7 @@
-﻿using System;
+﻿// 2017, 1, 22
+// LOS-Command:frmmain.cs
+// Copyright (c) 2017 PopulationX
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -35,6 +38,7 @@ namespace LOS_Command
             InitializeComponent();
             ConIO.Focus();
             ConIO.Select();
+            DisplayText("");
         }
 
         private void ConIO_KeyUp(object sender, KeyEventArgs e)
@@ -71,19 +75,19 @@ namespace LOS_Command
         private void ProcessCommand(string command)
         {
             _commandHistory.Add(command);
-            switch (command.ToLower().Split(' ')[0])
+            switch (command.ToLower().Split(' ')[1])
             {
                 case "version":
                     string[] parts = command.ToLower().Split(' ');
 
-                    if (parts.Length == 1)
+                    if (parts.Length == 2)
                     {
                         VersionInfo[] versionList = GetVersion.Version();
                         DisplayVersion(versionList);
                     }
-                    else if (parts.Length > 1)
+                    else if (parts.Length > 2)
                     {
-                        VersionInfo[] versionList = GetVersion.Version(command.ToLower().Split()[1]);
+                        VersionInfo[] versionList = GetVersion.Version(command.ToLower().Split()[2]);
                         DisplayFullVersion(versionList);
                     }
 
@@ -93,28 +97,46 @@ namespace LOS_Command
                     DisplayText("Teletype mode = " + _useTeleType.ToString());
                     break;
                 default:
-                    DisplayText(command.ToLower().Split(' ')[0].ToUpperInvariant() + " is not a recognized command");
+                    parts = command.ToLower().Split(' ');
+                    if (string.IsNullOrEmpty(parts[1]))
+                    {
+                        DisplayText("");
+                    }
+                    else
+                    {
+                        DisplayText(command.ToLower().Split(' ')[1].ToUpperInvariant() + " is not a recognized command");
+                    }
+
                     break;
             }
         }
 
         private void DisplayText(string text)
         {
-            if (_useTeleType)
+            if (string.IsNullOrEmpty(text))
             {
-                foreach (char c in text)
-                {
-                    ConIO.InsertText(c.ToString(), _responseStyle);
-                    ConIO.Refresh();
-                }
+                ConIO.InsertText(">>: ", _commandStyle);
             }
             else
             {
-                ConIO.InsertText(text);
-            }
+                if (_useTeleType)
+                {
+                    foreach (char c in text)
+                    {
+                        
+                            ConIO.InsertText(c.ToString(), _responseStyle);
+                        ConIO.Refresh();
+                    }
+                }
+                else
+                {
+                    ConIO.InsertText(text, _responseStyle);
+                }
 
-            ConIO.InsertText(Environment.NewLine, _commandStyle);
+                ConIO.InsertText(Environment.NewLine + ">>: ", _commandStyle);
+            }
         }
+
 
         private void DisplayVersion(VersionInfo[] versionList)
         {

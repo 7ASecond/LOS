@@ -44,6 +44,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DEFS-RemoteA.cs" />
     <Compile Include="DEFS.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
