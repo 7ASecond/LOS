@@ -1,0 +1,11 @@
+﻿extensions: designer.cs generated.cs
+extensions: .cs .cpp .h
+// %CurrentYear%, %CurrentMonth%, %CurrentDay%
+// %Project%:%FileName%
+// Copyright (c) %CurrentYear% PopulationX
+extensions: .vb
+'Sample license text.
+extensions:  .xml .config .xsd
+<!--
+Sample license text.
+-->
