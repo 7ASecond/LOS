@@ -58,6 +58,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Classes\Impersonator.cs" />
     <Compile Include="FrmInstaller.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -128,6 +129,7 @@
     <PostBuildEvent>copy "$(TargetPath)" c:\LOS\$(TargetFileName)
 copy "c:\Users\administrator\documents\visual studio 2015\Projects\LOS\packages\FCTB.2.16.21.0\lib\FastColoredTextBox.dll" C:\LOS\
 copy "$(TargetDir)Theme\Current\*.*" c:\LOS\Theme\Current
+copy "$(TargetDir)binaries\Autologon\*.*" c:\LOS\binaries\autologon
 copy "$(TargetDir)Theme\Default\*.*" c:\LOS\Theme\Default
 </PostBuildEvent>
   </PropertyGroup>

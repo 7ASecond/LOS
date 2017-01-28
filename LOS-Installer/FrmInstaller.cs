@@ -1,14 +1,17 @@
 ﻿// 2017, 1, 18
 // LOS-Installer:frminstaller.cs
 // Copyright (c) 2017 PopulationX
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Security.Principal;
 using System.Text;
@@ -56,7 +59,8 @@ namespace LOS_Installer
                 {
                     if (Environment.UserName == "LOSSystem")
                     {
-
+                        // AutoLogon LOSSystem
+                      var autologonGood =  AutoLogon();
                     }
                     else
                     {
@@ -86,6 +90,20 @@ namespace LOS_Installer
             // Reboot Computer
         }
 
+        private bool AutoLogon()
+        {
+            try
+            {
+                Process.Start(Path.Combine("C:\\LOS\\binaries\\AutoLogon\\", "AutoLogon.exe LOSSystem " + Environment.MachineName + " L05Sy73M@cK0unt"));
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+        }
+
         /// <summary>
         /// Attempts to make LOSSystem Account and Administrator Account
         /// </summary>
@@ -104,7 +122,7 @@ namespace LOS_Installer
                 if (groupPrincipal != null)
                 {
                     //check if user is a member
-                   
+
                     if (groupPrincipal.Members.Contains(systemContext, IdentityType.SamAccountName, "LOSSystem"))
                     {
                         return true;
@@ -120,8 +138,8 @@ namespace LOS_Installer
             }
             catch (Exception ex)
             {
-               //TODO: LOG THIS
-               
+                //TODO: LOG THIS
+
             }
 
             return false;
