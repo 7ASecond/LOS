@@ -52,6 +52,22 @@ namespace LOS_Installer
             if (accountGood)
             {
                 var administratorGood = LOSSystemIsAdministrator();
+                if (administratorGood)
+                {
+                    if (Environment.UserName == "LOSSystem")
+                    {
+
+                    }
+                    else
+                    {
+                        // We need to impersonate the LOSSystem User before continuing or reboot into LOSSystem
+                    }
+                }
+                else
+                {
+                    // Make LOSSystem User Account an Administrator.
+                    administratorGood = MakeLOSSystemAdministrator();
+                }
             }
             // Change: Check to see if the LOSSystem Account is Administrator
             // Change: Check to see if this application is running as LOSSystem
@@ -71,6 +87,47 @@ namespace LOS_Installer
         }
 
         /// <summary>
+        /// Attempts to make LOSSystem Account and Administrator Account
+        /// </summary>
+        /// <returns>
+        /// bool: True if successful
+        /// bool: False if failed
+        /// </returns>
+        private bool MakeLOSSystemAdministrator()
+        {
+            var systemContext = new PrincipalContext(ContextType.Machine, null);
+            var userPrincipal = UserPrincipal.FindByIdentity(systemContext, "LOSSystem");
+            try
+            {
+                var groupPrincipal = GroupPrincipal.FindByIdentity(systemContext, "Administrators");
+
+                if (groupPrincipal != null)
+                {
+                    //check if user is a member
+                   
+                    if (groupPrincipal.Members.Contains(systemContext, IdentityType.SamAccountName, "LOSSystem"))
+                    {
+                        return true;
+                    }
+                    //Adding the user to the group
+
+                    if (userPrincipal != null) groupPrincipal.Members.Add(userPrincipal);
+                    groupPrincipal.Save();
+                    return true;
+                }
+
+                return false;
+            }
+            catch (Exception ex)
+            {
+               //TODO: LOG THIS
+               
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Detects if the LOSSystem User Account is Administrator
         /// </summary>
         /// <returns>
@@ -79,7 +136,7 @@ namespace LOS_Installer
         /// </returns>
         private bool LOSSystemIsAdministrator()
         {
-         var ret = false;
+            var ret = false;
 
             try
             {
@@ -102,9 +159,9 @@ namespace LOS_Installer
                 ret = false;
             }
             return ret;
-        
 
-    }
+
+        }
 
         /// <summary>
         /// Does the LOSSystem Account Exist?
@@ -115,21 +172,11 @@ namespace LOS_Installer
         /// </returns>
         private bool LOSSystemAccountExists()
         {
-            var bRet = false;
+            var systemContext = new PrincipalContext(ContextType.Machine, null);
+            UserPrincipal usr = UserPrincipal.FindByIdentity(systemContext, "LOSSystem");
+            if (usr != null) return true;
+            return false;
 
-            try
-            {
-                var acct = new NTAccount("LOSSystem");
-                var id = (SecurityIdentifier)acct.Translate(typeof(SecurityIdentifier));
-
-                bRet = id.IsAccountSid();
-            }
-            catch (IdentityNotMappedException)
-            {
-                /* Invalid user account */
-            }
-
-            return bRet;
         }
 
         /// <summary>
@@ -148,7 +195,7 @@ namespace LOS_Installer
                 user.UserCannotChangePassword = false;
                 user.PasswordNeverExpires = false;
                 user.Save();
-                
+
                 //now add user to "Users" group so it displays in Control Panel
                 var group = GroupPrincipal.FindByIdentity(context, "Users");
                 group?.Members.Add(user);
