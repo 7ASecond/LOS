@@ -1,0 +1,6 @@
+1) Create a Local Account on the Machine Called: LOSSystem
+2) Give it the password: L05Sy73M@cK0unt
+3) Make the account an Administrator
+4) Download the latest Installer from: https://losstorage.blob.core.windows.net/installers
+5) Run Installer
+

@@ -11,6 +11,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using LOS_Security;
+using Microsoft.WindowsAzure.Storage;
 
 namespace LOS_DEFS
 {
@@ -420,5 +421,14 @@ namespace LOS_DEFS
         }
     }
 
+    public class AzureUnsafeFS
+    {
+       private CloudStorageAccount _storageAccount;
+
+        public AzureUnsafeFS()
+        {
+            _storageAccount = CloudStorageAccount.Parse("");
+        }
+    }
 
 }

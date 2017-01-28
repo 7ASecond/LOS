@@ -3,9 +3,12 @@
 // Copyright (c) 2017 PopulationX
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LOS_DEFS;
 
 namespace LOS_Updater
 {
@@ -86,9 +89,19 @@ namespace LOS_Updater
 #endif
         }
 
+        /// <summary>
+        /// Get the Installer - update file from Azure public Storage
+        /// </summary>
         private void DoDebugInstall()
         {
-            
+           DefsRemoteAzure dfa = new DefsRemoteAzure();
+            if (dfa.CheckForNewInstaller())
+            {
+                string pathToInstaller = dfa.GetLatestInstaller();
+
+                Process.Start(Path.Combine("C:\\LOS\\Installers", pathToInstaller));
+                
+            }
         }
 
     }

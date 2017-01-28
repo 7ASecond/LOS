@@ -34,11 +34,19 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="FastColoredTextBox, Version=2.16.21.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
-      <HintPath>..\packages\FCTB.2.16.21.0\lib\FastColoredTextBox.dll</HintPath>
-      <Private>True</Private>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\LOS\FastColoredTextBox.dll</HintPath>
+    </Reference>
+    <Reference Include="LOS-DEFS">
+      <HintPath>..\..\..\..\..\..\..\LOS\LOS-DEFS.dll</HintPath>
+    </Reference>
+    <Reference Include="LOS-Updater">
+      <HintPath>..\..\..\..\..\..\..\LOS\LOS-Updater.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
