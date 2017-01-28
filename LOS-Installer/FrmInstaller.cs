@@ -2,12 +2,15 @@
 // LOS-Installer:frminstaller.cs
 // Copyright (c) 2017 PopulationX
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.DirectoryServices;
 using System.DirectoryServices.AccountManagement;
 using System.Drawing;
 using System.Linq;
+using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -22,7 +25,7 @@ namespace LOS_Installer
         {
             InitializeComponent();
 
-            Image spinnerImg = Image.FromFile(@"Theme\Current\spinner.gif");
+            var spinnerImg = Image.FromFile(@"Theme\Current\spinner.gif");
 
             pictureBox1.Image = spinnerImg;
             pictureBox2.Image = spinnerImg;
@@ -36,14 +39,23 @@ namespace LOS_Installer
 
         private void FrmInstaller_Load(object sender, EventArgs e)
         {
-            UpdateCheck updateCheck = new UpdateCheck();
+            var updateCheck = new UpdateCheck();
             updateCheck.DoFullInstall(); // Run the installer (TODO: Convert this to a more controlled installation)
             pictureBox1.Image = Image.FromFile(@"theme\current\tick.png");
 
             // Create the LOS Super User on the Windows Host computer
             // Required to prevent or reduce the chances of the identification of the person running LOS
             pictureBox2.Visible = true;
-            pictureBox2.Image = Image.FromFile(CreateLocalWindowsAccount() ? @"theme\current\tick.png" : @"theme\current\cross.png");
+
+            // Change: Check to see if LOSSystem Account Exists
+            var accountGood = LOSSystemAccountExists();
+            if (accountGood)
+            {
+                var administratorGood = LOSSystemIsAdministrator();
+            }
+            // Change: Check to see if the LOSSystem Account is Administrator
+            // Change: Check to see if this application is running as LOSSystem
+            pictureBox2.Image = Image.FromFile(accountGood ? @"theme\current\tick.png" : @"theme\current\cross.png");
 
             // Impersonate the new LOSSystem User
 
@@ -59,14 +71,76 @@ namespace LOS_Installer
         }
 
         /// <summary>
+        /// Detects if the LOSSystem User Account is Administrator
+        /// </summary>
+        /// <returns>
+        /// bool: True the LOSSystem Account Is an Administrator Account
+        /// bool: False the LOSSystem Account Is NOT an administrator account.
+        /// </returns>
+        private bool LOSSystemIsAdministrator()
+        {
+         var ret = false;
+
+            try
+            {
+                var localMachine = new DirectoryEntry("WinNT://" + Environment.MachineName);
+                var userGroup = localMachine.Children.Find("Administrator", "group");
+
+                var members = userGroup.Invoke("members", null);
+                foreach (var groupMember in (IEnumerable)members)
+                {
+                    var member = new DirectoryEntry(groupMember);
+                    if (member.Name.Equals("LOSSystem", StringComparison.CurrentCultureIgnoreCase))
+                    {
+                        ret = true;
+                        break;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                ret = false;
+            }
+            return ret;
+        
+
+    }
+
+        /// <summary>
+        /// Does the LOSSystem Account Exist?
+        /// </summary>
+        /// <returns>
+        /// bool: True the account does exists
+        /// bool: False the account does not exist.
+        /// </returns>
+        private bool LOSSystemAccountExists()
+        {
+            var bRet = false;
+
+            try
+            {
+                var acct = new NTAccount("LOSSystem");
+                var id = (SecurityIdentifier)acct.Translate(typeof(SecurityIdentifier));
+
+                bRet = id.IsAccountSid();
+            }
+            catch (IdentityNotMappedException)
+            {
+                /* Invalid user account */
+            }
+
+            return bRet;
+        }
+
+        /// <summary>
         /// method to create a new local Windows user account
         /// </summary>        
         public static bool CreateLocalWindowsAccount()
         {
             try
             {
-                PrincipalContext context = new PrincipalContext(ContextType.Machine);
-                UserPrincipal user = new UserPrincipal(context);
+                var context = new PrincipalContext(ContextType.Machine);
+                var user = new UserPrincipal(context);
                 user.SetPassword("L05Sy73M@cK0unt");
                 user.DisplayName = "LOSSystem";
                 user.Name = "LOSSystem";
@@ -76,7 +150,7 @@ namespace LOS_Installer
                 user.Save();
                 
                 //now add user to "Users" group so it displays in Control Panel
-                GroupPrincipal group = GroupPrincipal.FindByIdentity(context, "Users");
+                var group = GroupPrincipal.FindByIdentity(context, "Users");
                 group?.Members.Add(user);
                 group?.Save();
 

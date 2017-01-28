@@ -94,10 +94,10 @@ namespace LOS_Updater
         /// </summary>
         private void DoDebugInstall()
         {
-           DefsRemoteAzure dfa = new DefsRemoteAzure();
+           var dfa = new DefsRemoteAzure();
             if (dfa.CheckForNewInstaller())
             {
-                string pathToInstaller = dfa.GetLatestInstaller();
+                var pathToInstaller = dfa.GetLatestInstaller();
 
                 Process.Start(Path.Combine("C:\\LOS\\Installers", pathToInstaller));
                 

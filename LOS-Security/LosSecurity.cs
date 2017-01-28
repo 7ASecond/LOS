@@ -52,7 +52,7 @@ namespace LOS_Security
             if (safeText == null)
                 throw new ArgumentNullException("safeText");
 
-            IntPtr unmanagedString = IntPtr.Zero;
+            var unmanagedString = IntPtr.Zero;
             try
             {
                 unmanagedString = Marshal.SecureStringToGlobalAllocUnicode(safeText);
@@ -75,7 +75,7 @@ namespace LOS_Security
         /// </remarks>
         public static void Erase(this string unsafeText)
         {
-            for (int idx = 0; idx < unsafeText.Length; idx++)
+            for (var idx = 0; idx < unsafeText.Length; idx++)
             {
                 unsafeText.ToCharArray()[idx] = '#';
             }

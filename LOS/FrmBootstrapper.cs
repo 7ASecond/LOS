@@ -100,8 +100,8 @@ namespace LOS
                 return;
             }
 
-            SecureString ssMemorableWord = new SecureString();
-            foreach (char c in tbMemorableWord.Text)
+            var ssMemorableWord = new SecureString();
+            foreach (var c in tbMemorableWord.Text)
             {
                 ssMemorableWord.AppendChar(c);
             }
@@ -115,8 +115,8 @@ namespace LOS
                 return;
             }
 
-            SecureString ssPassword = new SecureString();
-            foreach (char c in tbPassword.Text)
+            var ssPassword = new SecureString();
+            foreach (var c in tbPassword.Text)
             {
                 ssPassword.AppendChar(c);
             }
@@ -129,8 +129,8 @@ namespace LOS
                 return;
             }
 
-            SecureString ssUsername = new SecureString();
-            foreach (char c in tbUsername.Text)
+            var ssUsername = new SecureString();
+            foreach (var c in tbUsername.Text)
             {
                 ssUsername.AppendChar(c);
             }
@@ -197,7 +197,7 @@ namespace LOS
         /// </param>
         private void Run(LosApplications app, SecureString ssUsername, SecureString ssPassword, SecureString ssMemorableWord)
         {
-            string pathToApp = string.Empty;
+            var pathToApp = string.Empty;
 
             switch (app)
             {
@@ -213,8 +213,8 @@ namespace LOS
                     break;
             }
 
-            Process runProcess = new Process();
-            ProcessStartInfo processStartInfo = new ProcessStartInfo
+            var runProcess = new Process();
+            var processStartInfo = new ProcessStartInfo
             {
               //  Arguments = "-U:" + ssUsername + ",-P:" + ssPassword + ",-M:" + ssMemorableWord,
                 CreateNoWindow = false,

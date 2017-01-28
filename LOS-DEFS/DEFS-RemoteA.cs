@@ -32,11 +32,11 @@ namespace LOS_DEFS
 
         public bool CheckForNewInstaller()
         {
-            foreach (IListBlobItem item in _installerBlobContainer.ListBlobs(null, false))
+            foreach (var item in _installerBlobContainer.ListBlobs(null, false))
             {
                 if (item.GetType() == typeof(CloudBlockBlob))
                 {
-                    CloudBlockBlob blob = (CloudBlockBlob)item;
+                    var blob = (CloudBlockBlob)item;
 
                     if (blob.Name.ToLowerInvariant().EndsWith(".exe"))
                     {
@@ -54,14 +54,14 @@ namespace LOS_DEFS
                 }
                 else if (item.GetType() == typeof(CloudPageBlob))
                 {
-                    CloudPageBlob pageBlob = (CloudPageBlob)item;
+                    var pageBlob = (CloudPageBlob)item;
 
                     Console.WriteLine("Page blob of length {0}: {1}", pageBlob.Properties.Length, pageBlob.Uri);
 
                 }
                 else if (item.GetType() == typeof(CloudBlobDirectory))
                 {
-                    CloudBlobDirectory directory = (CloudBlobDirectory)item;
+                    var directory = (CloudBlobDirectory)item;
 
                     Console.WriteLine("Directory: {0}", directory.Uri);
                 }
@@ -72,7 +72,7 @@ namespace LOS_DEFS
         private int GetLatestLocalInstallerAsInt()
         {
             if (!Directory.Exists("C:\\Los\\Installers")) Directory.CreateDirectory("C:\\Los\\Installers");
-            string[] files = Directory.GetFiles("C:\\Los\\Installers");
+            var files = Directory.GetFiles("C:\\Los\\Installers");
             if (files.Length == 0)
             {
                 // No installers found return -1
@@ -84,9 +84,9 @@ namespace LOS_DEFS
 
         public string GetLatestInstaller()
         {
-            string latestInstallerPath = Path.Combine("C:\\Los\\Installers\\", LatestInstallerName);
+            var latestInstallerPath = Path.Combine("C:\\Los\\Installers\\", LatestInstallerName);
             // Retrieve reference to a blob named "photo1.jpg".
-            CloudBlockBlob blockBlob = _installerBlobContainer.GetBlockBlobReference(LatestInstallerName);
+            var blockBlob = _installerBlobContainer.GetBlockBlobReference(LatestInstallerName);
 
             // Save blob contents to a file.
             using (var fileStream = System.IO.File.OpenWrite(latestInstallerPath))

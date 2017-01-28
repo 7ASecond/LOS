@@ -74,7 +74,7 @@ namespace LOS_DEFS
         public bool CreateDEFS(int mb)
         {
             Int64 fileByteSize = (mb / 100) * 1024;
-            List<string> filenamesList = new List<string>();
+            var filenamesList = new List<string>();
             filenamesList = GenerateFilenames();
             Parallel.ForEach(filenamesList, (currentFile) =>
                 {
@@ -88,9 +88,9 @@ namespace LOS_DEFS
         private void GenerateFile(string currentFile, long fileByteSize)
         {
             // Create the full filename path
-            string fullPath = Path.Combine(UserFilesFolder, currentFile);
+            var fullPath = Path.Combine(UserFilesFolder, currentFile);
             // Create the random encrypted file contents
-            string fileContents = GenerateFileContents(fileByteSize);
+            var fileContents = GenerateFileContents(fileByteSize);
             // Finally save the file to the drive
             File.WriteAllText(fullPath, fileContents); // This may cause a locking problem TODO: Check this
         }
@@ -106,18 +106,18 @@ namespace LOS_DEFS
         /// </returns>
         private string GenerateFileContents(long fileByteSize)
         {
-            char[] chars = new char[62];
+            var chars = new char[62];
             chars =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
-            byte[] data = new byte[1];
-            using (RNGCryptoServiceProvider crypto = new RNGCryptoServiceProvider())
+            var data = new byte[1];
+            using (var crypto = new RNGCryptoServiceProvider())
             {
                 crypto.GetNonZeroBytes(data);
                 data = new byte[fileByteSize];
                 crypto.GetNonZeroBytes(data);
             }
-            StringBuilder result = new StringBuilder();
-            foreach (byte b in data)
+            var result = new StringBuilder();
+            foreach (var b in data)
             {
                 result.Append(chars[b % (chars.Length)]);
             }
@@ -134,18 +134,18 @@ namespace LOS_DEFS
         /// </returns>
         private string GenerateRandomPassword()
         {
-            char[] chars = new char[62];
+            var chars = new char[62];
             chars =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890".ToCharArray();
-            byte[] data = new byte[1];
-            using (RNGCryptoServiceProvider crypto = new RNGCryptoServiceProvider())
+            var data = new byte[1];
+            using (var crypto = new RNGCryptoServiceProvider())
             {
                 crypto.GetNonZeroBytes(data);
                 data = new byte[20];
                 crypto.GetNonZeroBytes(data);
             }
-            StringBuilder result = new StringBuilder();
-            foreach (byte b in data)
+            var result = new StringBuilder();
+            foreach (var b in data)
             {
                 result.Append(chars[b % (chars.Length)]);
             }
@@ -162,12 +162,12 @@ namespace LOS_DEFS
         /// </returns>
         private List<string> GenerateFilenames()
         {
-            Random random = new Random();
-            int fileNameCount = random.Next(5, 20);
-            List<string> filenamesList = new List<string>();
-            for (int idx = 0; idx < fileNameCount; idx++)
+            var random = new Random();
+            var fileNameCount = random.Next(5, 20);
+            var filenamesList = new List<string>();
+            for (var idx = 0; idx < fileNameCount; idx++)
             {
-                string g = Guid.NewGuid().ToString();
+                var g = Guid.NewGuid().ToString();
                 filenamesList.Add(g.Replace("-", ""));
             }
             return filenamesList;
@@ -192,9 +192,9 @@ namespace LOS_DEFS
         /// </returns>
         public UserStatus FindUser(SecureString username, SecureString password, SecureString memorableWord)
         {
-            foreach (string filePath in GetUserFilePaths())
+            foreach (var filePath in GetUserFilePaths())
             {
-                UserStatus us = SearchForUserInUserFile(filePath, username, password, memorableWord);
+                var us = SearchForUserInUserFile(filePath, username, password, memorableWord);
                 if (us == UserStatus.UserExists) return UserStatus.UserExists;
                 if (us == UserStatus.UserPanic) return UserStatus.UserPanic;
             }
@@ -224,7 +224,7 @@ namespace LOS_DEFS
         /// </returns>
         private UserStatus SearchForUserInUserFile(string filePath, SecureString username, SecureString password, SecureString memorableWord)
         {
-            int fileOffset = GetFileOffset(username, password);
+            var fileOffset = GetFileOffset(username, password);
             FileStream fs = null;
             StreamReader sr = null;
 
@@ -233,21 +233,21 @@ namespace LOS_DEFS
                 fs = new FileStream(Path.Combine(UserFilesFolder, filePath), FileMode.Open, FileAccess.Read,
                     FileShare.Read);
                 sr = new StreamReader(fs);
-                char[] buffer = new char[8];
+                var buffer = new char[8];
                 sr.Read(buffer, fileOffset, 8);
-                string unsafePassphrase = username.ConvertToUnsecureString();
+                var unsafePassphrase = username.ConvertToUnsecureString();
                 unsafePassphrase += password.ConvertToUnsecureString();
 
-                StringBuilder sb = new StringBuilder();
-                foreach (char c in buffer)
+                var sb = new StringBuilder();
+                foreach (var c in buffer)
                 {
                     sb.Append(c.ToString());
                 }
 
-                string result = StringCipher.Decrypt(sb.ToString(), unsafePassphrase);
+                var result = StringCipher.Decrypt(sb.ToString(), unsafePassphrase);
                 unsafePassphrase.Erase();
-                int lookupPosition = -1;
-                bool successfulConversion = int.TryParse(result, out lookupPosition);
+                var lookupPosition = -1;
+                var successfulConversion = int.TryParse(result, out lookupPosition);
                 if (successfulConversion)
                 {
                     if (SearchForMemorableWord(fs, memorableWord, lookupPosition, username, password))
@@ -316,20 +316,20 @@ namespace LOS_DEFS
             {
 
                 sr = new StreamReader(fs);
-                char[] buffer = new char[8];
+                var buffer = new char[8];
                 sr.Read(buffer, lookupPosition, 8);
-                string unsafePassphrase = username.ConvertToUnsecureString();
+                var unsafePassphrase = username.ConvertToUnsecureString();
                 unsafePassphrase += password.ConvertToUnsecureString();
 
-                StringBuilder sb = new StringBuilder();
-                foreach (char c in buffer)
+                var sb = new StringBuilder();
+                foreach (var c in buffer)
                 {
                     sb.Append(c.ToString());
                 }
 
-                string result = StringCipher.Decrypt(sb.ToString(), unsafePassphrase);
+                var result = StringCipher.Decrypt(sb.ToString(), unsafePassphrase);
                 unsafePassphrase.Erase();
-                string unsafeMemorableWord = memorableWord.ConvertToUnsecureString();
+                var unsafeMemorableWord = memorableWord.ConvertToUnsecureString();
                 if (result == unsafeMemorableWord)
                 {
                     unsafeMemorableWord.Erase();
@@ -379,12 +379,12 @@ namespace LOS_DEFS
         private int GetFileOffset(SecureString username, SecureString password)
         {
             // Convert the secure username and password to unsafe strings
-            string unsafeString = GetUnsafeString(username);
+            var unsafeString = GetUnsafeString(username);
             unsafeString += GetUnsafeString(password);
 
             // Calculate their numeric values (This is the offset)
-            int totalValue = 0;
-            foreach (char c in unsafeString)
+            var totalValue = 0;
+            foreach (var c in unsafeString)
             {
                 totalValue += (int)c;
             }

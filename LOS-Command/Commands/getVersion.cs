@@ -21,8 +21,8 @@ namespace LOS_Command.Commands
         {
             if (filename == String.Empty)
             {
-                VersionInfo[] versions = new VersionInfo[1];
-                VersionInfo vi = new VersionInfo();
+                var versions = new VersionInfo[1];
+                var vi = new VersionInfo();
                 vi.VersionNumber = Assembly.GetExecutingAssembly().GetName().Version.ToString();
                 vi.Filename = Assembly.GetExecutingAssembly().FullName;
                 versions[0] = vi;
@@ -36,13 +36,13 @@ namespace LOS_Command.Commands
         private static VersionInfo[] AssemblyVersion(string filename)
         {
             // Search the LOS Directory for the file(s) with that filename and return appropriate version information.
-            string[] files = Directory.GetFiles("C:\\LOS\\", filename + ".*", SearchOption.AllDirectories);
+            var files = Directory.GetFiles("C:\\LOS\\", filename + ".*", SearchOption.AllDirectories);
 
-            VersionInfo[] versions = new VersionInfo[1];
+            var versions = new VersionInfo[1];
 
             if (files.Length == 0)
             {
-                VersionInfo vi = new VersionInfo
+                var vi = new VersionInfo
                 {
                     Filename = filename,
                     VersionNumber = "N/A"
@@ -53,16 +53,16 @@ namespace LOS_Command.Commands
 
 
             versions = new VersionInfo[files.Length];
-            int idx = 0;
-            foreach (string file in files)
+            var idx = 0;
+            foreach (var file in files)
             {
                 var ErrorMessage = "";
 
-                VersionInfo vi = new VersionInfo();
+                var vi = new VersionInfo();
 
                 try
                 {
-                    string assemblyVersion = Assembly.LoadFile(file).GetName().Version.ToString();
+                    var assemblyVersion = Assembly.LoadFile(file).GetName().Version.ToString();
                     vi.Filename = file;
                     vi.VersionNumber = assemblyVersion;
                 }

@@ -78,16 +78,16 @@ namespace LOS_Command
             switch (command.ToLower().Split(' ')[1])
             {
                 case "version":
-                    string[] parts = command.ToLower().Split(' ');
+                    var parts = command.ToLower().Split(' ');
 
                     if (parts.Length == 2)
                     {
-                        VersionInfo[] versionList = GetVersion.Version();
+                        var versionList = GetVersion.Version();
                         DisplayVersion(versionList);
                     }
                     else if (parts.Length > 2)
                     {
-                        VersionInfo[] versionList = GetVersion.Version(command.ToLower().Split()[2]);
+                        var versionList = GetVersion.Version(command.ToLower().Split()[2]);
                         DisplayFullVersion(versionList);
                     }
 
@@ -121,7 +121,7 @@ namespace LOS_Command
             {
                 if (_useTeleType)
                 {
-                    foreach (char c in text)
+                    foreach (var c in text)
                     {
                         
                             ConIO.InsertText(c.ToString(), _responseStyle);
@@ -140,7 +140,7 @@ namespace LOS_Command
 
         private void DisplayVersion(VersionInfo[] versionList)
         {
-            foreach (VersionInfo version in versionList)
+            foreach (var version in versionList)
             {
                 DisplayText("File: " + version?.Filename);
 
@@ -149,7 +149,7 @@ namespace LOS_Command
 
         private void DisplayFullVersion(VersionInfo[] versionList)
         {
-            foreach (VersionInfo version in versionList)
+            foreach (var version in versionList)
             {
                 if (version?.VersionNumber == "N/A")
                     DisplayText(NoSuchFile + version?.Filename);
