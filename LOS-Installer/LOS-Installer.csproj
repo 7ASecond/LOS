@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Impersonator.cs" />
+    <Compile Include="Classes\OSVersionInfoClass.cs" />
     <Compile Include="FrmInstaller.cs">
       <SubType>Form</SubType>
     </Compile>

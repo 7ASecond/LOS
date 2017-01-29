@@ -17,6 +17,8 @@ using System.Security.Principal;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using JCS;
+using LOS_Installer.Classes;
 using LOS_Updater;
 
 
@@ -27,7 +29,7 @@ namespace LOS_Installer
         public FrmInstaller()
         {
             InitializeComponent();
-
+            Log("Initializing Installer");
             var spinnerImg = Image.FromFile(@"Theme\Current\spinner.gif");
 
             pictureBox1.Image = spinnerImg;
@@ -42,42 +44,43 @@ namespace LOS_Installer
 
         private void FrmInstaller_Load(object sender, EventArgs e)
         {
-            var updateCheck = new UpdateCheck();
-            updateCheck.DoFullInstall(); // Run the installer (TODO: Convert this to a more controlled installation)
+            Application.DoEvents();
+            Log("Ignoring Update Check");
+            //Log("Checking for updates");
+            //var updateCheck = new UpdateCheck();
+            //updateCheck.DoFullInstall(); // Run the installer (TODO: Convert this to a more controlled installation)
             pictureBox1.Image = Image.FromFile(@"theme\current\tick.png");
-
+            pictureBox1.Refresh();
             // Create the LOS Super User on the Windows Host computer
             // Required to prevent or reduce the chances of the identification of the person running LOS
             pictureBox2.Visible = true;
-
+            pictureBox2.Refresh();
             // Change: Check to see if LOSSystem Account Exists
+            Log("Does LOSSystem Account Exist?");
             var accountGood = LOSSystemAccountExists();
-            if (accountGood)
-            {
-                var administratorGood = LOSSystemIsAdministrator();
-                if (administratorGood)
-                {
-                    if (Environment.UserName == "LOSSystem")
-                    {
-                        // AutoLogon LOSSystem
-                      var autologonGood =  AutoLogon();
-                    }
-                    else
-                    {
-                        // We need to impersonate the LOSSystem User before continuing or reboot into LOSSystem
-                    }
-                }
-                else
-                {
-                    // Make LOSSystem User Account an Administrator.
-                    administratorGood = MakeLOSSystemAdministrator();
-                }
-            }
+            ManageLosSystemAccount(accountGood);
             // Change: Check to see if the LOSSystem Account is Administrator
             // Change: Check to see if this application is running as LOSSystem
             pictureBox2.Image = Image.FromFile(accountGood ? @"theme\current\tick.png" : @"theme\current\cross.png");
 
             // Impersonate the new LOSSystem User
+            pictureBox4.Visible = true;
+            pictureBox4.Refresh();
+            if (Environment.UserName != "LOSSystem")
+            {
+                using (new Impersonator("LOSSystem", Environment.MachineName, "L05Sy73M@cK0unt"))
+                {                                        
+                    HardenWindowsSecurity();                   
+                }
+                pictureBox4.Image = Image.FromFile(@"theme\current\tick.png");
+                pictureBox4.Refresh();
+            }
+            else
+            {
+                HardenWindowsSecurity();
+                pictureBox4.Image = Image.FromFile(@"theme\current\tick.png");
+                pictureBox4.Refresh();
+            }
 
             // Harden Windows Security
 
@@ -88,6 +91,130 @@ namespace LOS_Installer
             // Change Windows Desktop to LOS
 
             // Reboot Computer
+
+            Log("Installation Complete");
+        }
+
+        private void HardenWindowsSecurity()
+        {
+            Log("Hardening Windows Security");
+            Log("Getting Windoes Version and type");
+           Log(OSVersionInfo.Name);
+            Log("Edition = "+ OSVersionInfo.Edition);
+            if (OSVersionInfo.ServicePack != string.Empty)
+                Log("Service Pack = "+ OSVersionInfo.ServicePack);
+            else
+                Log("Service Pack = None");
+            Log("Version = "+ OSVersionInfo.VersionString);
+            Log("ProcessorBits = "+ OSVersionInfo.ProcessorBits);
+            Log("OSBits = "+ OSVersionInfo.OSBits);
+            Log("ProgramBits = "+ OSVersionInfo.ProgramBits);
+            Log("Killing Unwanted Services");
+            KillServices();
+            Log("Killing Unwanted Logs");
+            KillLogs();
+            Log("Killing Unwanted Processes");
+            KillProcesses();
+            Log("Killing Unwanted Caches");
+            Killcaches();
+            
+        }
+
+        private void Killcaches()
+        {
+            
+
+        }
+
+        private void KillProcesses()
+        {
+            
+        }
+
+        private void KillLogs()
+        {
+            
+        }
+
+        private void KillServices()
+        {
+            
+
+        }
+
+        private void ManageLosSystemAccount(bool accountGood)
+        {
+
+            
+            if (accountGood)
+            {
+                Log("Is LOSSystem Account Administrator?");
+                var administratorGood = LOSSystemIsAdministrator();
+                if (administratorGood)
+                {
+                    pictureBox3.Visible = true;
+                    pictureBox3.Refresh();
+                    if (Environment.UserName == "LOSSystem")
+                    {
+                        // AutoLogon LOSSystem
+                        Log("Autologon LOSSystem Account");
+                        var autologonGood = AutoLogon();
+
+                    }
+                    else
+                    {
+                        Log("Impersonate LOSSystem Account");
+                        // We need to impersonate the LOSSystem User before continuing or reboot into LOSSystem
+                        using (new Impersonator("LOSSystem", Environment.MachineName, "L05Sy73M@cK0unt"))
+                        {
+                            Log("Autologon LOSSystem Account");
+                            var autologonGood = AutoLogon();
+                        }
+                    }
+                }
+                else
+                {
+                    // Make LOSSystem User Account an Administrator.
+                    Log("Make LOSSystem Account Administrator");
+                    administratorGood = MakeLOSSystemAdministrator();
+
+                }
+            }
+            else
+            {
+                Log("Does LOSSystem Account Does Not Exist?");
+                Log("Create LOSSystem Account");
+                CreateLocalWindowsAccount();
+                Log("Is LOSSystem Account Administrator?");
+                var administratorGood = LOSSystemIsAdministrator();
+                if (administratorGood)
+                {
+                    if (Environment.UserName == "LOSSystem")
+                    {
+                        // AutoLogon LOSSystem
+                        Log("Autologon LOSSystem Account");
+                        var autologonGood = AutoLogon();
+                    }
+                    else
+                    {
+                        Log("Impersonate LOSSystem Account");
+                        // We need to impersonate the LOSSystem User before continuing or reboot into LOSSystem
+                        using (new Impersonator("LOSSystem", Environment.MachineName, "L05Sy73M@cK0unt"))
+                        {
+                            Log("Autologon LOSSystem Account");
+                            var autologonGood = AutoLogon();
+                        }
+                    }
+                }
+                else
+                {
+                    // Make LOSSystem User Account an Administrator.
+                    Log("Make LOSSystem Account Administrator");
+                    administratorGood = MakeLOSSystemAdministrator();
+                }
+            }
+            pictureBox3.Image = Image.FromFile(@"theme\current\tick.png");
+            pictureBox3.Refresh();
         }
 
         private bool AutoLogon()
@@ -159,7 +286,7 @@ namespace LOS_Installer
             try
             {
                 var localMachine = new DirectoryEntry("WinNT://" + Environment.MachineName);
-                var userGroup = localMachine.Children.Find("Administrator", "group");
+                var userGroup = localMachine.Children.Find("Administrators", "group");
 
                 var members = userGroup.Invoke("members", null);
                 foreach (var groupMember in (IEnumerable)members)
@@ -235,6 +362,13 @@ namespace LOS_Installer
                 return false;
             }
 
+        }
+
+        private void Log(string msg)
+        {
+            fctb.InsertText(msg + Environment.NewLine);
+            fctb.Focus();
+            fctb.Refresh();
         }
     }
 }

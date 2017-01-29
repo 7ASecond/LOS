@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.WindowsAzure.Storage;
@@ -27,11 +28,13 @@ namespace LOS_DEFS
 
         public DefsRemoteAzure()
         {
-           
+            
         }
 
         public bool CheckForNewInstaller()
         {
+            if (NoNetwork()) return false;
+
             foreach (var item in _installerBlobContainer.ListBlobs(null, false))
             {
                 if (item.GetType() == typeof(CloudBlockBlob))
@@ -67,6 +70,25 @@ namespace LOS_DEFS
                 }
             }
             return false;
+        }
+
+        private bool NoNetwork()
+        {
+
+            try
+            {
+                using (var client = new WebClient())
+                {
+                    using (var stream = client.OpenRead("http://www.google.com"))
+                    {
+                        return true;
+                    }
+                }
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         private int GetLatestLocalInstallerAsInt()
